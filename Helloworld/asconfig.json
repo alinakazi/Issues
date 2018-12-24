@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "source-map": true,
+        "targets": [
+            "JSRoyale"
+        ]
+    },
+    "files":
+    [
+        "src/HelloWorld.mxml"
+    ]
+}

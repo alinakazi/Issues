@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to You under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+  -->
+
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.apache.org/royale/mx"
+		 xmlns:js="library://ns.apache.org/royale/basic"
+		 width="100%" height="100%"
+		 creationComplete="{onApplicationComplete()}">
+
+    <fx:Script>
+        <![CDATA[
+       
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.controls.Alert;
+		import mx.rpc.AsyncToken;
+		import mx.rpc.Responder;
+		import XMLList;
+		import XML;
+		
+	    [Bindable] public var menuDataProvider:XMLList;
+	
+	    public function onApplicationComplete(): void
+	    {
+			  var responder:Responder = new Responder(fn_AppMenusRH, fn_HandleFault);
+			  var token:AsyncToken = roBasic.f_GetAppMenus("SUPER", "3");
+			  token.addResponder(responder);
+              trace(token); 
+		
+        }
+		
+		
+        protected function fn_AppMenusRH(e:ResultEvent):void {
+		trace("fn_AppMenusRH Called");
+			menuDataProvider = new XMLList(e.message.body.toString());
+			APPMenu.enabled = true;
+		} 
+        
+		private function fn_HandleFault(e:FaultEvent):void {
+				Alert.show("Status: Error");
+					
+			}
+			
+			
+        ]]>
+		
+		
+    </fx:Script>
+	
+  <fx:Declarations>
+			<mx:RemoteObject id="roBasic" endpoint="http://localhost:8080/SHMA/messagebroker/websocket-amf"
+						 destination="shmBasic" fault="fn_HandleFault(event);"
+						 /> 
+			
+  </fx:Declarations>
+	
+  <mx:beads>
+        <js:ClassAliasBead />
+    </mx:beads>
+   
+     <mx:MenuBar id='APPMenu'  width="100%" x="0" y="55" height="26"
+     dataProvider="{menuDataProvider}">
+	 
+	<!-- <mx:beads> -->
+	 <!-- <js:CascadingMenuFactory /> -->
+	<!-- </mx:beads> -->
+	
+    </mx:MenuBar> 
+  
+	
+</mx:Module>
